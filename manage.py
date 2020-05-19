@@ -4,18 +4,19 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_cors import CORS
 from flask_mail import Mail, Message
-from flask_jwt_extended import(
+from flask_jwt_extended import (
     JWTManager, get_jwt_identity
 )
-from models import db, Consumer, Category, Bottle, Exchage
+from models import db, Consumer, Category, Bottle
+from werkzeug.utils import secure_filename
 from routes.authconsumer import authconsumer
-from routes.image import images
-
-from werkzeug.utils import secure_filename #move to new route file
+from routes.picture import route_pictures
+from routes.category import route_categories
+from routes.bottle import route_bootles
 from datetime import timedelta
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static')
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/img')
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -45,7 +46,10 @@ def home():
     return render_template('index.html', name = 'home')
 
 app.register_blueprint(authconsumer)
-app.register_blueprint(images)
+app.register_blueprint(route_pictures)
+app.register_blueprint(route_bootles)
+app.register_blueprint(route_categories)
+
 
 if __name__ == '__main__':
     manager.run()

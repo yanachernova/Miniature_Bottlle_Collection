@@ -53,21 +53,3 @@ class Bottle(db.Model):
             'category': self.category.serialize()
         }
 
-class Exchage(db.Model):
-    __tablename__ = 'exchanges'
-    id = db.Column(db.Integer,primary_key = True)
-    country = db.Column(db.String(255), nullable = False)
-    image = db.Column(db.String(255), nullable = False)
-    consumer_id = db.Column(db.Integer, db.ForeignKey('consumers.id'), nullable = False)
-    consumer = db.relationship(Consumer, backref = backref('children', cascade = 'all, delete'))
-    
-    def __repr__(self):
-        return 'Bottle %r' % self.country
-
-    def serialize(self):
-        return{
-            'id': self.id,
-            'country': self.country,
-            'image': self.image,
-            'consumer': self.consumer.serialize()
-        }

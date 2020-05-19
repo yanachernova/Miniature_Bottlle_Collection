@@ -1,34 +1,40 @@
-from flask import Blueprint, jsonify, request
+from flask import Flask, render_template, jsonify, request, Blueprint
 from models import db, Bottle
+from flask_jwt_extended import (
+    jwt_required
+)
 
-bootles = Blueprint('bootles', __name__)
-@bootles.route('/bootles', methods=['GET','POST'])
-@bootles.route('/bootles/<int:id>', methods=['GET','DELETE'])
-@bootles.route('/bootles/category/<int:category_id>', methods=['GET'])
-@bootles.route('/bootles/category/<int:category_id>/bootle/<int:id>', methods=['GET'])
+route_bootles = Blueprint('route_bootles', __name__)
+@route_bootles.route('/bootles', methods=['GET','POST'])
+@route_bootles.route('/bootles/<int:id>', methods=['GET','DELETE'])
+@route_bootles.route('/bootles/category/<int:category_id>/<int:boolean>', methods=['GET'])
 @jwt_required
-def bottles(id=None, category_id=None):
+def bottles(id=None, category_id=None, boolean=1):
     if request.method == 'GET':
-        if id is not None and category_id is not None:
-            bottle = Bottle.query.filter_by(category_id = category_id, id = id).first()
-            if bottle:
-                return jsonify(bottle.serialize()), 200
-            else:
-                return jsonify({"msg":"Not Found"}), 404
-        elif id is not None:
+        if id is not None:
             bottle = Bottle.query.get(id)
             if bottle:
                 return jsonify(bottle.serialize()), 200
             else:
                 return jsonify({"msg":"Not Found"}), 404
         elif category_id is not None:
-            bottles = Bottle.query.filter_by(category_id = category_id).first()
-            bottles = list(map(lambda bottle: bottle.serialize(), bottles))
-            return jsonify(bottles), 200
+            #Condition for show all the bootles in the route category_id
+            if boolean is 1:
+                bottles = Bottle.query.filter_by(category_id = category_id).all()
+                bottles = list(map(lambda bottle: bottle.serialize(), bottles))
+                return jsonify(bottles), 200
+            #Condition for show all the bootles that are not in the route category_id
+            elif boolean is 0:
+                bottles = Bottle.query.filter(Bottle.category_id != category_id).all()
+                bottles = list(map(lambda bottle: bottle.serialize(), bottles))
+                return jsonify(bottles), 200
+            else:
+                return jsonify({"msg":"Invalid Route"})
         else:
             bottles = Bottle.query.all()
             bottles = list(map(lambda bottle: bottle.serialize(), bottles))
             return jsonify(bottles), 200
+
     if request.method == 'POST':
         country = request.json.get('country')
         image = request.json.get('image')

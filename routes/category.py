@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Flask, render_template, jsonify, request, Blueprint
 from models import db, Category
 from flask_jwt_extended import (
     jwt_required
 )
+
 route_categories = Blueprint('route_categories', __name__)
 @route_categories.route('/categories', methods=['GET','POST'])
 @route_categories.route('/categories/<int:id>', methods=['GET', 'DELETE'])
@@ -39,7 +40,6 @@ def categories(id=None, consumer_id = None):
             return jsonify({"msg": "Name is required"}), 422 
         if not consumer_id:
             return jsonify({"msg": "consumer_id is required"}), 422 
-
         category = Category()
         category.name = name
         category.consumer_id = consumer_id
@@ -47,15 +47,7 @@ def categories(id=None, consumer_id = None):
         db.session.commit()
         return jsonify(category.serialize()), 201
     
-    if request.method == 'PUT':
-        
-        category = Category.query.get(id)
-        category.name = request.json.get('name')
-        db.session.commit()
-        return jsonify(category.serialize()), 200
-
     if request.method == 'DELETE':
-        
         category = Category.query.get(id)
         db.session.delete(category)
         db.session.commit()
