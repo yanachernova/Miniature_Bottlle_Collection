@@ -7,13 +7,13 @@ from flask_mail import Mail, Message
 from flask_jwt_extended import (
     JWTManager, get_jwt_identity
 )
+from datetime import timedelta
 from models import db, Consumer, Category, Bottle
-from werkzeug.utils import secure_filename
 from routes.authconsumer import authconsumer
 from routes.picture import route_pictures
 from routes.category import route_categories
-from routes.bottle import route_bootles
-from datetime import timedelta
+from routes.bottle import route_bottles
+from routes.email import route_email
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/img')
@@ -47,9 +47,9 @@ def home():
 
 app.register_blueprint(authconsumer)
 app.register_blueprint(route_pictures)
-app.register_blueprint(route_bootles)
+app.register_blueprint(route_bottles)
 app.register_blueprint(route_categories)
-
+app.register_blueprint(route_email)
 
 if __name__ == '__main__':
     manager.run()

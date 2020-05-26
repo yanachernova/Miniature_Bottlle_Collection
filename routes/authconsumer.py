@@ -12,12 +12,12 @@ def login():
     email = request.json.get('email')
     password = request.json.get('password')
     if not email:
-        return jsonify({"msg": "You need insert your email"}), 422
+        return jsonify({"error": "You need insert your email"}), 422
     if not password:
-        return jsonify({"msg": "You need insert your password"}), 422
+        return jsonify({"error": "You need insert your password"}), 422
     consumer = Consumer.query.filter_by(email=email).first()
     if not consumer:
-        return jsonify({"msg": "Email is not correct"}), 404
+        return jsonify({"error": "Email is not correct"}), 404
     pw_hash = bcrypt.generate_password_hash(password)
     if bcrypt.check_password_hash(consumer.password, password):
         access_token = create_access_token(identity=consumer.email)
@@ -27,19 +27,19 @@ def login():
         }
         return jsonify(data), 200
     else: 
-        return jsonify({"msg": "Email or password is not correct"}), 401
+        return jsonify({"error": "Email or password is not correct"}), 401
         
 @authconsumer.route('/register', methods=['POST'])
 def register():
     email = request.json.get('email')
     password = request.json.get('password')
     if not email:
-        return jsonify({"msg": "You need to write yor email"}), 422
+        return jsonify({"error": "You need to write yor email"}), 422
     if not password:
-        return jsonify({"msg": "You need to write your password"}), 422 
+        return jsonify({"error": "You need to write your password"}), 422 
     consumer = Consumer.query.filter_by(email=email).first()
     if consumer:
-        return jsonify({"msg": "This email already exist"}), 422
+        return jsonify({"error": "This email already exist"}), 422
     consumer = Consumer()
     consumer.email = email
     consumer.password = bcrypt.generate_password_hash(password)
@@ -53,6 +53,6 @@ def register():
         }
         return jsonify(data), 200
     else: 
-        return jsonify({"msg": "Email or password is incorrect"}), 401
+        return jsonify({"error": "Email or password are incorrect"}), 401
 
 
