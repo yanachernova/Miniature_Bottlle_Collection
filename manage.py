@@ -50,6 +50,3 @@ app.register_blueprint(route_pictures)
 app.register_blueprint(route_bottles)
 app.register_blueprint(route_categories)
 app.register_blueprint(route_email)
-
-if __name__ == '__main__':
-    manager.run()
