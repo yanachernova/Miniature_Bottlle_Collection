@@ -32,7 +32,7 @@ app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_DEBUG'] = True
 app.config['MAIL_USERNAME'] = 'fineukraine94@gmail.com'
-app.config['MAIL_PASSWORD'] = 'dqhxchlvckgjlbks'
+app.config['MAIL_PASSWORD'] = ''
 jwt = JWTManager(app)
 db.init_app(app)
 mail = Mail(app)
